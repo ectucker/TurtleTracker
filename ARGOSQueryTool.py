@@ -12,11 +12,19 @@ fileName = "SaraNoHeader.txt"
 fileObj = open(fileName, 'r')
 
 # Read in all lines in the text file into a list variable
-lineString = fileObj.readline()
+lineStrings = fileObj.readlines()
+print("There are {} records in the file".format(len(lineStrings))) #create a dictionary, use the format command to tell it what to go in the dict
+
+#close the file
+fileObj.close()
+
+#create empty dictionary
+dateDict = {}
+locationDict = {}
 
 #Loop through everything using a while loop wite while followed by a condition
 # this loop evaluates by goin to the next line, if the next line doesn't exist then the command is false and it will stop running
-while lineString:
+for lineString in lineStrings:
     # Use the split command to parse the items in lineString into a list object
     lineData = lineString.split("\t")
 
@@ -25,12 +33,15 @@ while lineString:
     obsDateTime = lineData[2]           # Observation date and time (combined)
     obsDate = obsDateTime.split()[0]    # Observation date - first item in obsDateTime list object
     obsTime = obsDateTime.split()[1]    # Observation time - second item in obsDateTime list object
+#object
     obsLC = lineData[3]                 # Observation Location Class
     obsLat = lineData[5]                # Observation Latitude
     obsLon = lineData[6]                # Observation Longitude
 
-    # Print information to the user
-    print ("Record {0} indicates Sara was seen at {1}N and {2}W on {3}".format(recordID, obsLat,obsLat,obsDate))
+    #adds values to dictionaries
+    dateDict[recordID] = obsDateTime
+    locationDict[recordID] = (obsLon, obsLat)
+    #indicate that script is finished
+print("finished")
 
-    #go to next line
-    lineString = fileObj.readline()
+   
