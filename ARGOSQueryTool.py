@@ -2,8 +2,8 @@
 #
 # Description: Parses a line of ARGOS tracking data 
 #
-# Created by: Emily C. Tucker (emily.tucker1@duke.edu)
-# Created on: September 26, 2018
+# Created by: John Fay (john.fay@duke.edu)
+# Created on: Sept, 2018
 
 # Create a variable pointing to the file with no header
 fileName = "SaraNoHeader.txt"
@@ -11,37 +11,56 @@ fileName = "SaraNoHeader.txt"
 # Open the file as a read-only file object
 fileObj = open(fileName, 'r')
 
-# Read in all lines in the text file into a list variable
+# Read the first line from the open file object
 lineStrings = fileObj.readlines()
-print("There are {} records in the file".format(len(lineStrings))) #create a dictionary, use the format command to tell it what to go in the dict
-
-#close the file
+print ("There are {} records in the file".format(len(lineStrings)))
+    
+# Close the file object
 fileObj.close()
 
-#create empty dictionary
+# Create empty dictionaries
 dateDict = {}
 locationDict = {}
+try:
+    # Use a for loop to read each line, one at a time, until the list is exhausted
+    for lineString in lineStrings:
 
-#Loop through everything using a while loop wite while followed by a condition
-# this loop evaluates by goin to the next line, if the next line doesn't exist then the command is false and it will stop running
-for lineString in lineStrings:
-    # Use the split command to parse the items in lineString into a list object
-    lineData = lineString.split("\t")
+        # Use the split command to parse the items in lineString into a list object
+        lineData = lineString.split("\t")
 
-    # Assign variables to specfic items in the list
-    recordID = lineData[0]              # ARGOS tracking record ID
-    obsDateTime = lineData[2]           # Observation date and time (combined)
-    obsDate = obsDateTime.split()[0]    # Observation date - first item in obsDateTime list object
-    obsTime = obsDateTime.split()[1]    # Observation time - second item in obsDateTime list object
-#object
-    obsLC = lineData[3]                 # Observation Location Class
-    obsLat = lineData[5]                # Observation Latitude
-    obsLon = lineData[6]                # Observation Longitude
+        # Assign variables to specfic items in the list
+        recordID = lineData[0]              # ARGOS tracking record ID
+        obsDateTime = lineData[2]           # Observation date and time (combined)
+        obsDate = obsDateTime.split()[0]    # Observation date - first item in obsDateTime list object
+        obsTime = obsDateTime.split()[1]    # Observation time - second item in obsDateTime list object
+        obsLC = lineData[3]                 # Observation Location Class
+        obsLat = lineData[5]                # Observation Latitude
+        obsLon = lineData[6]                # Observation Longitude
 
-    #adds values to dictionaries
-    dateDict[recordID] = obsDateTime
-    locationDict[recordID] = (obsLon, obsLat)
-    #indicate that script is finished
-print("finished")
+        #Filter records that get added to the dictionary
+        if obsLC in ("1","2","3"):
 
-   
+            # Add values to dictionary
+            dateDict[recordID] = obsDate
+            locationDict[recordID] = (obsLat, obsLon) 
+
+    # Indicate script is complete
+    print ("Finished")
+
+    # Ask the user for a date, specifying the format
+    userDate = input("Enter a date (M/D/YYYY)")
+    #check the date
+    if not "/" in userDate:
+        print("wrong format")
+    #Create an empty key list
+    keyList = []
+
+    # Loop through all key, value pairs in the dateDictionary
+    for k, v in dateDict.items():
+        #See if the date (the value) matches the user date
+        if v == userDate:
+            keyList.append(k)
+    for key in keyList:
+        print(locationDict[key])
+except Exception as e:
+    print(e)
